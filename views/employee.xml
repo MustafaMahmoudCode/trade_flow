@@ -1,0 +1,82 @@
+<odoo>
+  <data>
+
+    <!-- LIST EMPLOYEE -->
+    <record id="view_employee_list" model="ir.ui.view">
+      <field name="name">employee.list</field>
+      <field name="model">shipping.employee</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="name"/>
+          <field name="phone"/>
+          <field name="email" icon="fa-bell-slash" optional="show"/>
+          <field name="job_title" optional="hide"/>
+        </list>
+      </field>
+    </record>
+
+<!-- ======================== FORM EMPLOYEE ======================== -->
+<record id="view_employee_form" model="ir.ui.view">
+    <field name="name">employee.form</field>
+    <field name="model">shipping.employee</field>
+    <field name="arch" type="xml">
+        <form string="Employee">
+            <sheet>
+                <group>
+=                   <field name="image_1920" widget="image" class="rounded-circle border" style="width:100px;height:100px;object-fit:cover;"/>
+                    <field name="name"/>
+                    <field name="job_title"/>
+                    <field name="phone"/>
+                    <field name="email"/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!--============================================-->
+<!--              KANBAN EMPLOYEES             -->
+<!--============================================-->
+<record id="view_employee_kanban_simple" model="ir.ui.view">
+    <field name="name">employee.kanban.simple</field>
+    <field name="model">shipping.employee</field>
+    <field name="arch" type="xml">
+        <kanban class="o_kanban_small_column">
+            <!-- تعريف الحقول اللي هتستخدم في template -->
+            <field name="image_1920"/>
+            <field name="name"/>
+            <field name="job_title"/>
+            <field name="email"/>
+            <field name="phone"/>
+
+            <templates>
+                <t t-name="card">
+                    <div class="oe_kanban_global_click ">
+                        <div class="o_kanban_image me-2">
+                            <field name="image_1920" widget="image" class="rounded-circle" style="width:50px;height:50px;object-fit:cover;"/>
+                        </div>
+                        <div class="o_kanban_details o_kanban_record d-flex align-items-center">
+                            <strong><t t-esc="record.name.value"/></strong>
+                            <div>Job: <t t-esc="record.job_title.value"/></div>
+                            <div>Email: <t t-esc="record.email.value"/></div>
+                            <div>Phone: <t t-esc="record.phone.value"/></div>
+                        </div>
+                    </div>
+                </t>
+            </templates>
+        </kanban>
+    </field>
+</record>
+
+
+
+
+    <!-- ACTIONS -->
+    <record id="action_employees" model="ir.actions.act_window">
+      <field name="name">Employees</field>
+      <field name="res_model">shipping.employee</field>
+      <field name="view_mode">list,form,kanban</field>
+    </record>
+
+  </data>
+</odoo>

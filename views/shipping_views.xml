@@ -1,0 +1,98 @@
+<odoo>
+    <data>
+     <!-- LIST SHIPMENT -->
+    <record id="view_shipment_list" model="ir.ui.view">
+      <field name="name">shipment.list</field>
+      <field name="model">shipping.shipment</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="name"/>
+          <field name="client_id"/>
+          <field name="employee_id" icon="fa-bell-slash" optional="show"/>
+          <field name="shipment_date" optional="hide" icon="fa-bell-slash"/>
+          <field name="weight" optional="hide"/>
+          <field name="shipment_type" optional="hide"/>
+          <field name="state" optional="hide"/>
+        </list>
+      </field>
+    </record>
+
+
+    <!-- FORM SHIPMENT -->
+    <record id="view_shipment_form" model="ir.ui.view">
+      <field name="name">shipment.form</field>
+      <field name="model">shipping.shipment</field>
+      <field name="arch" type="xml">
+        <form string="Shipment">
+          <header>
+            <!-- Buttons -->
+            <button name="action_in_transit"
+                    type="object"
+                    string="Start Transit"
+                    class="oe_highlight"
+                    invisible="state != 'pending'"/>
+
+            <button name="action_delivered"
+                    type="object"
+                    string="Delivered"
+                    class="oe_highlight"
+                    invisible="state != 'in_transit'"/>
+
+            <button name="action_cancel"
+                    type="object"
+                    string="Cancel"
+                    class="oe_highlight"
+                    invisible="state in ('delivered','cancel')"/>
+
+            <!-- Statusbar -->
+            <field name="state" widget="statusbar" statusbar_visible="pending,in_transit,delivered,cancel"/>
+          </header>
+
+          <sheet>
+              <h1>Important</h1>
+          <group>
+            <group string="Info 1">
+              <field name="shipment_date"/>
+              <field name="weight"/>
+              <field name="shipment_type"/>
+            </group>
+            <group string="info 2">
+              <field name="name"/>
+              <field name="client_id"/>
+              <field name="employee_id"/>
+            </group>
+          </group>
+              <notebook>
+                  <page string="notes">
+                      <group>
+                          <field name="notes"/>
+                      </group>
+                  </page>
+              </notebook>
+              <field name="message_follower_ids"/>
+              <field name="activity_ids"/>
+              <field name="message_ids"/>
+          </sheet>
+          <chatter/>
+        </form>
+      </field>
+    </record>
+
+
+     <!--            ACTIONS             -->
+    <record id="action_shipments" model="ir.actions.act_window">
+      <field name="name">Shipments</field>
+      <field name="res_model">shipping.shipment</field>
+      <field name="view_mode">list,form,kanban</field>
+    </record>
+
+
+        <!-- OWL Action -->
+        <record id="action_owl_shipment_list" model="ir.actions.client">
+            <field name="name">OWL Shipment List</field>
+            <field name="tag">shipment_list.action_js</field> <!-- نفس الاسم في JS registry -->
+        </record>
+
+
+    </data>
+</odoo>

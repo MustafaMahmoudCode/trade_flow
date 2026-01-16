@@ -1,0 +1,108 @@
+<odoo>
+    <data>
+<!--============================================-->
+<!--               LIST CLIENTS                -->
+<!--============================================-->
+    <record id="view_client_list" model="ir.ui.view">
+      <field name="name">client.list</field>
+      <field name="model">shipping.client</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="name"/>
+          <field name="phone"/>
+          <field name="email" icon="fa-bell-slash" optional="show"/>
+          <field name="address" optional="hide"/>
+        </list>
+      </field>
+    </record>
+
+<!--============================================-->
+<!--                FORM CLIENTS                -->
+<!--============================================-->
+    <record id="view_client_form" model="ir.ui.view">
+      <field name="name">client.form</field>
+      <field name="model">shipping.client</field>
+      <field name="arch" type="xml">
+        <form string="Shipment">
+              <header>
+                  <button name="trade_flow.action_add_shipment_wizard"
+                          string="Add Shipment"
+                          type="action"
+                          class="btn-primary"
+                          context="{'default_client_id': id}"/>
+              </header>
+          <sheet>
+            <group>
+              <field name="name"/>
+              <field name="address"/>
+              <field name="phone"/>
+              <field name="email"/>
+              <field name="image_1920"  widget="image" class="rounded-circle border" style="width:100px;height:100px;object-fit:cover;"/>
+            </group>
+              <notebook>
+                  <page string="SHIPMENTS">
+                      <field name="shipment_ids">
+                          <form>
+                              <field name="name"/>
+                              <field name="state"/>
+                              <field name="employee_id"/>
+                              <field name="shipment_type"/>
+                              <field name="weight"/>
+                              <field name="shipment_date"/>
+                          </form>
+                      </field>
+                  </page>
+              </notebook>
+
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+<!--============================================-->
+<!--              KANBAN CLIENTS                -->
+<!--============================================-->
+    <record id="view_client_kanban_simple" model="ir.ui.view">
+        <field name="name">client.kanban.simple</field>
+        <field name="model">shipping.client</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_small_column">
+                <!-- Fields -->
+                <field name="image_1920"/>
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_image me-2">
+                                <field name="image_1920" widget="image" class="rounded-circle" style="width:50px;height:50px;object-fit:cover;"/>
+                            </div>
+                            <div class="o_kanban_details o_kanban_record d-flex align-items-center" >
+                                <strong><t t-esc="record.name.value"/></strong>
+                                <div>Email: <t t-esc="record.email.value"/></div>
+                                <div>Phone: <t t-esc="record.phone.value"/></div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+
+
+<!--============================================-->
+<!--                  ACTIONS                   -->
+<!--============================================-->
+    <record id="action_clients" model="ir.actions.act_window">
+      <field name="name">Clients</field>
+      <field name="res_model">shipping.client</field>
+      <field name="view_mode">list,form,kanban</field>
+    </record>
+<!--    <record id="action_client_owl" model="ir.actions.client">-->
+<!--        <field name="name">Client OWL</field>-->
+<!--        <field name="tag">client_list</field> &lt;!&ndash; نفس الاسم في registry JS &ndash;&gt;-->
+<!--    </record>-->
+    </data>
+</odoo>

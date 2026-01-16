@@ -1,0 +1,36 @@
+<odoo>
+    <!-- Wizard Form -->
+    <record id="add_shipment_wizard_form" model="ir.ui.view">
+        <field name="name">add.shipment.wizard</field>
+        <field name="model">shipping.add_shipment</field>
+        <field name="arch" type="xml">
+            <form string="Add Shipment">
+                <group>
+                  <group>
+                    <field name="client_id" options="{'no_create_edit': True, 'no_create':True}"/>
+                    <field name="employee_id" options="{'no_create_edit': True, 'no_create':True}"/>
+                    <field name="shipment_date"/>
+                  </group>
+                  <group>
+                    <field name="weight"/>
+                    <field name="shipment_type"/>
+                    <field name="notes"/>
+                  </group>
+                </group>
+                <footer>
+                    <button name="confirm_shipment" string="Confirm" type="object" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_add_shipment_wizard" model="ir.actions.act_window">
+        <field name="name">Add Shipment</field>
+        <field name="res_model">shipping.add_shipment</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="add_shipment_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

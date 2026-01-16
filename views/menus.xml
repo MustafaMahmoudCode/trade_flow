@@ -1,0 +1,30 @@
+<odoo>
+    <data>
+    <!-- ======================= -->
+    <!-- ROOt Menu -->
+    <!-- ======================= -->
+    <menuitem name="Trade Flow Company" id="menu_shipping_root"/>
+
+
+    <!-- Menu Resources -->
+    <menuitem id="menu_resources" name="Resources" parent="menu_shipping_root" sequence="1"/>
+        <!-- Menu Categories -->
+    <menuitem id="menu_employees" name="Employees" parent="menu_resources" action="action_employees"/>
+    <menuitem id="menu_clients" name="Clients" parent="menu_resources" action="action_clients"/>
+
+    <!-- ======================= -->
+    <!-- Sub Menus -->
+    <!-- ======================= -->
+   <menuitem id="menu_transactions" name="Transactions" parent="menu_shipping_root" sequence="2"/>
+   <menuitem id="menu_shipments" name="Shipments" parent="menu_transactions" action="action_shipments" sequence="0" />
+   <menuitem id="menu_add_shipments" name="Add Shipments" parent="menu_transactions" action="action_add_shipment_wizard" sequence="2"/>
+
+    <!-- ======================= -->
+    <!-- OWL Menus -->
+    <!-- ======================= -->
+        <menuitem id="menu_shipments_owl"
+                  name="Shipments OWL"
+                  parent="menu_transactions"
+                  action="trade_flow.action_owl_shipment_list" sequence="1"/>
+    </data>
+</odoo>

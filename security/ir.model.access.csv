@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_employee,shipping.employee,model_shipping_employee,base.group_user,1,1,1,1
+access_client,shipping.client,model_shipping_client,base.group_user,1,1,1,1
+access_shipment,shipping.shipment,model_shipping_shipment,base.group_user,1,1,1,1
+access_add_shipment_user,access_add.shipment_user,model_shipping_add_shipment,base.group_user,1,1,1,1
