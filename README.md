@@ -1,2 +1,2 @@
 # trade_flow
-Custom Odoo ERP module for managing import/export operations, employees, clients, and shipments with interactive OWL components and QWeb templates.
+End-to-end custom Odoo ERP module for import/export and shipping management, including employee and client management, shipment lifecycle workflow, record rules–based security, automated sequences, wizards, interactive OWL client actions, and QWeb reporting templates.
