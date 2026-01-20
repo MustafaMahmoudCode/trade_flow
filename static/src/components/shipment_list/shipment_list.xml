@@ -3,6 +3,8 @@
 
     <t t-name="trade_flow.ShipmentList">
         <div class="ship-list-container">
+
+            <!-- Header -->
             <div class="row mx-2 mt-3">
                 <!-- New Shipment Button -->
                 <div class="col-lg-6">
@@ -15,7 +17,7 @@
                 </div>
 
                 <!-- Search Box -->
-                <div class="col-lg-2">
+                <div class="col-lg-3">
                     <div class="input-group">
                         <input type="text"
                                class="form-control"
@@ -45,7 +47,10 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody t-foreach="state.shipments" t-as="shipment" t-key="shipment.id">
+
+                        <tbody t-foreach="state.shipments"
+                               t-as="shipment"
+                               t-key="shipment.id">
                             <tr>
                                 <td><t t-esc="shipment.weight"/></td>
                                 <td><t t-esc="shipment.shipment_type"/></td>
@@ -55,7 +60,8 @@
                                 <td><t t-esc="shipment.name"/></td>
                                 <td>
                                     <button class="btn btn-success me-2"
-                                            data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#exampleModal"
                                             t-on-click="() => this.editShipment(shipment)">
                                         Edit
                                     </button>
@@ -66,95 +72,102 @@
                                 </td>
                             </tr>
                         </tbody>
+
                     </table>
                 </div>
             </div>
 
             <!-- Add / Edit Shipment Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="exampleModal" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
 
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Add/Edit Shipment</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <h5 class="modal-title">Add / Edit Shipment</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
 
                         <div class="modal-body">
 
                             <!-- Weight -->
-                            <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label">Weight (kg)</label>
-                                <div class="col-sm-10">
-                                    <input type="number" class="form-control" t-model="state.shipment.weight"/>
-                                </div>
+                            <div class="mb-3">
+                                <label class="form-label">Weight (kg)</label>
+                                <input type="number"
+                                       class="form-control"
+                                       t-model="state.shipmentForm.weight"/>
                             </div>
 
                             <!-- Shipment Type -->
-                            <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label">Type</label>
-                                <div class="col-sm-10">
-                                    <select class="form-select" t-model="state.shipment.shipment_type">
-                                        <option value="standard">Standard</option>
-                                        <option value="express">Express</option>
-                                    </select>
-                                </div>
+                            <div class="mb-3">
+                                <label class="form-label">Type</label>
+                                <select class="form-select"
+                                        t-model="state.shipmentForm.shipment_type">
+                                    <option value="standard">Standard</option>
+                                    <option value="express">Express</option>
+                                </select>
                             </div>
 
                             <!-- Status -->
-                            <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label">Status</label>
-                                <div class="col-sm-10">
-                                    <select class="form-select" t-model="state.shipment.state">
-                                        <option value="pending">Pending</option>
-                                        <option value="in_transit">In Transit</option>
-                                        <option value="delivered">Delivered</option>
-                                        <option value="cancel">Cancelled</option>
-                                    </select>
-                                </div>
+                            <div class="mb-3">
+                                <label class="form-label">Status</label>
+                                <select class="form-select"
+                                        t-model="state.shipmentForm.state">
+                                    <option value="pending">Pending</option>
+                                    <option value="in_transit">In Transit</option>
+                                    <option value="delivered">Delivered</option>
+                                    <option value="cancel">Cancelled</option>
+                                </select>
                             </div>
 
                             <!-- Client -->
-                            <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label">Client</label>
-                                <div class="col-sm-10">
-                                    <select class="form-select" t-model="state.shipment.client_id">
-                                        <option t-foreach="state.clients" t-as="c" t-key="c.id"
-                                                t-att-value="c.id"
-                                                t-att-selected="state.shipment.client_id === c.id">
-                                            <t t-esc="c.name"/>
-                                        </option>
-                                    </select>
-                                </div>
+                            <div class="mb-3">
+                                <label class="form-label">Client</label>
+                                <select class="form-select"
+                                        t-model="state.shipmentForm.client_id">
+                                    <option value="">Select Client</option>
+                                    <option t-foreach="state.clients"
+                                            t-as="c"
+                                            t-key="c.id"
+                                            t-att-value="c.id">
+                                        <t t-esc="c.name"/>
+                                    </option>
+                                </select>
                             </div>
 
-                            <!-- Handled By -->
-                            <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label">Handled By</label>
-                                <div class="col-sm-10">
-                                    <select class="form-select" t-model="state.shipment.employee_id">
-                                        <option t-foreach="state.employees" t-as="e" t-key="e.id"
-                                                t-att-value="e.id"
-                                                t-att-selected="state.shipment.employee_id === e.id">
-                                            <t t-esc="e.name"/>
-                                        </option>
-                                    </select>
-                                </div>
+                            <!-- Employee -->
+                            <div class="mb-3">
+                                <label class="form-label">Handled By</label>
+                                <select class="form-select"
+                                        t-model="state.shipmentForm.employee_id">
+                                    <option value="">Select Employee</option>
+                                    <option t-foreach="state.employees"
+                                            t-as="e"
+                                            t-key="e.id"
+                                            t-att-value="e.id">
+                                        <t t-esc="e.name"/>
+                                    </option>
+                                </select>
                             </div>
 
                             <!-- Reference -->
-                            <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label">Reference</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" t-model="state.shipment.name" placeholder="Auto generated if empty"/>
-                                </div>
+                            <div class="mb-3">
+                                <label class="form-label">Reference</label>
+                                <input type="text"
+                                       class="form-control"
+                                       t-model="state.shipmentForm.name"/>
                             </div>
 
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" t-on-click="saveShipment">Save</button>
+                            <button class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+                                Close
+                            </button>
+                            <button class="btn btn-primary"
+                                    t-on-click="saveShipment">
+                                Save
+                            </button>
                         </div>
 
                     </div>

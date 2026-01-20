@@ -1,9 +1,15 @@
 /** @odoo-module **/
-import { registry } from '@web/core/registry';
-const { Component, useState, onWillStart, useRef } = owl;
-import { useService } from '@web/core/utils/hooks';
 
+import { registry } from "@web/core/registry";
+import { useService } from "@web/core/utils/hooks";
+
+const { Component, useState, onWillStart, useRef } = owl;
+
+// ==================================================
+// Owl Shipment List Component
+// ==================================================
 export class OwlShipmentList extends Component {
+    // Props (Action binding)
     static props = {
         action: Object,
         actionId: Number,
@@ -11,158 +17,175 @@ export class OwlShipmentList extends Component {
         className: String,
     };
 
+    // ----------------------------------------------
+    // Setup
+    // ----------------------------------------------
     setup() {
-        this.orm = useService("orm");            // <<use in (search read - create - write - unlink)
+        this.orm = useService("orm");
+        this.searchInputRef = useRef("search-input");
 
+        // State
         this.state = useState({
-            shipment: {
-                weight: 0,
-                shipment_type: 'standard',
-                state: 'pending',
-                client_id: false,
-                employee_id: false,
-                name: '',
-            },
+            shipmentForm: this._getEmptyShipment(),
             shipments: [],
             clients: [],
             employees: [],
-            isEdit: false,                  //add or edite?
+            isEdit: false,
             activeId: false,
         });
 
-        this.searchInput = useRef("search-input");
-
-        onWillStart(async () => {                   //for get data
-            await this.getClients();
-            await this.getEmployees();
-            await this.getShipments();
+        // Lifecycle
+        onWillStart(async () => {
+            await this._loadInitialData();
         });
     }
 
-        // ===== GET SHIPMENT:) =====
-    async getShipments() {
-        const shipments = await this.orm.searchRead(
-            'shipping.shipment',
-            [],
-            ['weight','shipment_type','state','client_id','employee_id','name']
-        );
-                            // TODO: Study code
-        this.state.shipments = shipments.map(s => ({        // <كود تحويل >
-            ...s,
-            client_name: s.client_id ? s.client_id[1] : '',      //condition ? value_if_true : value_if_false
-
-            employee_name: s.employee_id ? s.employee_id[1] : '',
-        }));
+    // ==================================================
+    // Initial Data
+    // ==================================================
+    async _loadInitialData() {
+        await Promise.all([          // 3 works at the moment
+            this._fetchClients(),
+            this._fetchEmployees(),
+            this._fetchShipments(),
+        ]);
     }
 
-    // =====GET CLIENT =====
-    async getClients() {
+    // ==================================================
+    // Fetch Methods = get all tasks
+    // ==================================================
+    async _fetchShipments(domain = []) {
+        const records = await this.orm.searchRead(
+            "shipping.shipment",
+            domain,
+            ["name", "weight", "shipment_type", "state", "client_id", "employee_id"]
+        );
+
+        this.state.shipments = records.map(this._formatShipment);
+    }
+
+    async _fetchClients() {
         this.state.clients = await this.orm.searchRead(
-            'shipping.client',
+            "shipping.client",
             [],
-            ['name']
+            ["name"]
         );
     }
 
-    // ===== GET EMPLOYEE =====
-    async getEmployees() {
+    async _fetchEmployees() {
         this.state.employees = await this.orm.searchRead(
-            'shipping.employee',
+            "shipping.employee",
             [],
-            ['name']
+            ["name"]
         );
     }
 
-    // ===== إضافة شحنة جديدة =====
-    addShipment() {
-       // TODO: Study code
-        let lastId = 0;
-        if (this.state.shipments.length > 0) {
-            const lastShipment = this.state.shipments[this.state.shipments.length - 1];
-            const match = lastShipment.name?.match(/(\d+)$/);
-            if (match) lastId = parseInt(match[1], 10);
-        }
-        lastId += 1;
+    // ==================================================
+    // Helpers / Formatting
+    // ==================================================
+    _formatShipment(shipment) { // Name is redy for view
+        return {
+            ...shipment,
+            client_name: shipment.client_id ? shipment.client_id[1] : "",
+            employee_name: shipment.employee_id ? shipment.employee_id[1] : "",
+        };
+    }
 
-        this.state.shipment = {
+    _getEmptyShipment(name = "") { // Data >> UI
+        return {
+            name,
             weight: 0,
-            shipment_type: 'standard',
-            state: 'pending',
+            shipment_type: "standard",
+            state: "pending",
             client_id: false,
             employee_id: false,
-            name: `SHIP-${lastId.toString().padStart(3,'0')}`,      //TODO: الشكل SHIP-001, SHIP-002
         };
+    }
+    _generateShipmentName() { //name (SHIP-010)
+        if (!this.state.shipments.length) return "SHIP-001";
+
+        const lastName = this.state.shipments.at(-1).name;
+        const match = lastName?.match(/(\d+)$/);
+
+        const nextId = match ? parseInt(match[1], 10) + 1 : 1;
+        return `SHIP-${nextId.toString().padStart(3, "0")}`;
+    }
+
+    // ==================================================
+    // CRUD Actions
+    // ==================================================
+    addShipment() {
+        this.state.shipmentForm = this._getEmptyShipment(
+            this._generateShipmentName()
+        );
         this.state.isEdit = false;
         this.state.activeId = false;
     }
 
-    // ===== تعديل شحنة =====
     editShipment(shipment) {
-        this.state.activeId = shipment.id;
-        this.state.isEdit = true;
-        // نسخ فقط الحقول الفعلية
-        this.state.shipment = {
+        this.state.shipmentForm = {
+            name: shipment.name,
             weight: shipment.weight,
             shipment_type: shipment.shipment_type,
             state: shipment.state,
-            client_id: shipment.client_id,
-            employee_id: shipment.employee_id,
-            name: shipment.name,
+            client_id: shipment.client_id ? shipment.client_id[0] : false,
+            employee_id: shipment.employee_id ? shipment.employee_id[0] : false,
         };
+
+        this.state.isEdit = true;
+        this.state.activeId = shipment.id;
     }
 
-    // ===== حفظ الشحنة =====
     async saveShipment() {
-        const s = this.state.shipment;
+        const s = this.state.shipmentForm;
 
-        // تحويل IDs لأرقام
+        if (!s.client_id) {
+            return alert("Please select a Client!");
+        }
+
         const data = {
+            name: s.name,
             weight: s.weight,
             shipment_type: s.shipment_type,
             state: s.state,
-            client_id: s.client_id ? parseInt(s.client_id, 10) : false,
-            employee_id: s.employee_id ? parseInt(s.employee_id, 10) : false,
-            name: s.name,
+            client_id: Number(s.client_id),
+            employee_id: s.employee_id ? Number(s.employee_id) : false,
         };
 
-        if (!data.client_id) return alert("Please select a Client!");
-
         if (this.state.isEdit && this.state.activeId) {
-            await this.orm.write('shipping.shipment', [this.state.activeId], data);
+            await this.orm.write("shipping.shipment", [this.state.activeId], data);
         } else {
-            await this.orm.create('shipping.shipment', [data]);
+            await this.orm.create("shipping.shipment", [data]);
         }
 
-        await this.getShipments();
-        this.addShipment(); // إعادة تهيئة النموذج
-    }
-
-    // ===== حذف شحنة =====
-    async deleteShipment(shipment) {
-        if (!shipment.id) return;
-        await this.orm.unlink('shipping.shipment', [shipment.id]);
-        await this.getShipments();
+        await this._fetchShipments();
         this.addShipment();
     }
 
-    // ===== البحث =====
-    async searchShipment() {
-        if (!this.searchInput.el) return;
-        const text = this.searchInput.el.value;
-        const shipments = await this.orm.searchRead(
-            'shipping.shipment',
-            [['name','ilike',text]],
-            ['weight','shipment_type','state','client_id','employee_id','name']
-        );
+    async deleteShipment(shipment) {
+        if (!shipment?.id) return;
 
-        this.state.shipments = shipments.map(s => ({
-            ...s,
-            client_name: s.client_id ? s.client_id[1] : '',
-            employee_name: s.employee_id ? s.employee_id[1] : '',
-        }));
+        await this.orm.unlink("shipping.shipment", [shipment.id]);
+        await this._fetchShipments();
+        this.addShipment();
+    }
+
+    // ==================================================
+    // Search
+    // ==================================================
+    async searchShipment() {
+        const value = this.searchInputRef.el?.value || "";
+
+        await this._fetchShipments([
+            ["name", "ilike", value],
+        ]);
     }
 }
 
-// ===== ربط الكمبوننت بالـ template =====
-OwlShipmentList.template = 'trade_flow.ShipmentList';
-registry.category('actions').add('shipment_list.action_js', OwlShipmentList);
+// ==================================================
+// Template & Action Registry
+// ==================================================
+OwlShipmentList.template = "trade_flow.ShipmentList";
+registry
+    .category("actions")
+    .add("shipment_list.action_js", OwlShipmentList);

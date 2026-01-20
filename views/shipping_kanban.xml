@@ -17,11 +17,11 @@
                         <t t-name="card">
                             <div class="oe_kanban_global_click o_kanban_record"
                                  t-att-class="'oe_kanban_color_%s' % record.color.raw_value">
+                                <!-- photo -->
                                 <div class="o_kanban_image">
-                                    <img t-if="record.image_1920.raw_value"
-                                         t-att-src="kanban_image('shipping.shipment', 'image_1920', record.id.raw_value)"
-                                         alt="Shipment Image"/>
+                                    <field name="image_1920" widget="image" class="w-100 h-auto object-fit-contain" options="{'size': (64, 64)}"/>
                                 </div>
+
                                 <div class="o_kanban_details">
                                     <strong>Shipment: <t t-esc="record.name.value"/></strong>
                                     <div><i class="fa fa-user me-1" title="Client"/><t t-esc="record.client_id.value"/></div>

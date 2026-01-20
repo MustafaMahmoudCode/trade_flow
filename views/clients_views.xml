@@ -37,19 +37,23 @@
               <field name="address"/>
               <field name="phone"/>
               <field name="email"/>
+              <field name="employee_id"/>
               <field name="image_1920"  widget="image" class="rounded-circle border" style="width:100px;height:100px;object-fit:cover;"/>
             </group>
               <notebook>
                   <page string="SHIPMENTS">
-                      <field name="shipment_ids">
-                          <form>
+                      <field name="my_shipments_ids" domain="[('employee_id.user_id','=',uid)]">
+                          <list>
                               <field name="name"/>
                               <field name="state"/>
-                              <field name="employee_id"/>
+                              <field name="employee_id"
+                                     options="{'no_create': False}"
+                                     context="{'default_user_id': uid}"
+                                     default="uid"/>
                               <field name="shipment_type"/>
                               <field name="weight"/>
                               <field name="shipment_date"/>
-                          </form>
+                          </list>
                       </field>
                   </page>
               </notebook>

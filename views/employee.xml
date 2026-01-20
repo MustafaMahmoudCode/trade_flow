@@ -23,16 +23,18 @@
         <form string="Employee">
             <sheet>
                 <group>
-=                   <field name="image_1920" widget="image" class="rounded-circle border" style="width:100px;height:100px;object-fit:cover;"/>
+                    <field name="image_1920" widget="image" class="rounded-circle border" style="width:100px;height:100px;object-fit:cover;"/>
                     <field name="name"/>
                     <field name="job_title"/>
                     <field name="phone"/>
                     <field name="email"/>
+                    <field name="user_id"/>
                 </group>
             </sheet>
         </form>
     </field>
 </record>
+
 
 <!--============================================-->
 <!--              KANBAN EMPLOYEES             -->

@@ -15,6 +15,7 @@ and provides a clear menu structure to manage trading operations efficiently.
     'depends': ['base','mail'],
     'data': [
         'security/ir.model.access.csv',
+        'security/security.xml',
         'data/data.xml',
         'views/menus.xml',
         'wizards/add_shipment.xml',

@@ -49,7 +49,11 @@
           </header>
 
           <sheet>
-              <h1>Important</h1>
+            <div class="oe_title">
+                <h1>
+                    <field name="name" readonly="1"/>
+                </h1>
+            </div>
           <group>
             <group string="Info 1">
               <field name="shipment_date"/>
@@ -57,10 +61,12 @@
               <field name="shipment_type"/>
             </group>
             <group string="info 2">
-              <field name="name"/>
               <field name="client_id"/>
               <field name="employee_id"/>
             </group>
+              <group>
+                  <field name="image_1920" widget="image" class="oe_avatar" options="{'size': (64, 64)}"/>
+              </group>
           </group>
               <notebook>
                   <page string="notes">
